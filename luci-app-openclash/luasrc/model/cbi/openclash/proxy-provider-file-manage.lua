@@ -23,7 +23,7 @@ p[x].enable=false
 end
 end
 
-proxy_form=SimpleForm("proxy_provider_file_list",translate("Proxy Provider File List"))
+proxy_form=SimpleForm("proxy_provider_file_list",translate(""))
 proxy_form.reset=false
 proxy_form.submit=false
 tb1=proxy_form:section(Table,p)
@@ -119,5 +119,4 @@ o.write = function()
   HTTP.redirect(DISP.build_url("admin", "services", "openclash", "config"))
 end
 
-proxy_form:append(Template("openclash/toolbar_show"))
 return proxy_form

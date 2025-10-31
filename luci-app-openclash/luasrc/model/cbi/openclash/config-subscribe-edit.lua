@@ -13,17 +13,9 @@ bold_on  = [[<strong>]]
 bold_off = [[</strong>]]
 
 
-m = Map(openclash, translate("Config Subscribe Edit"))
+m = Map(openclash, translate(""))
 m.pageaction = false
-m.description=translate("Convert Subscribe function of Online is Supported By subconverter Written By tindy X") ..
-"<br/>"..
-"<br/>"..translate("API By tindy X & lhie1")..
-"<br/>"..
-"<br/>"..translate("Subconverter external configuration (subscription conversion template) Description: https://github.com/tindy2013/subconverter#external-configuration-file")..
-"<br/>"..
-"<br/>"..translate("If you need to customize the external configuration file (subscription conversion template), please write it according to the instructions, upload it to the accessible location of the external network, and fill in the address correctly when using it")..
-"<br/>"..
-"<br/>"..translate("If you have a recommended external configuration file (subscription conversion template), you can modify by following The file format of /usr/share/openclash/res/sub_ini.list and pr")
+m.description=translate("")
 m.redirect = luci.dispatcher.build_url("admin/services/openclash/config-subscribe")
 if m.uci:get(openclash, sid) ~= "config_subscribe" then
 	luci.http.redirect(m.redirect)
@@ -222,5 +214,4 @@ o.write = function()
    luci.http.redirect(m.redirect)
 end
 
-m:append(Template("openclash/toolbar_show"))
 return m

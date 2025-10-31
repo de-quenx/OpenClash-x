@@ -23,7 +23,7 @@ else
 	end
 end
 
-m = Map("openclash", translate("File Edit"))
+m = Map("openclash", translate(""))
 m.pageaction = false
 m.redirect = luci.dispatcher.build_url("admin/services/openclash/"..arg[1])
 s = m:section(TypedSection, "openclash")
@@ -69,5 +69,4 @@ o.write = function()
 end
 
 m:append(Template("openclash/config_editor"))
-m:append(Template("openclash/toolbar_show"))
 return m

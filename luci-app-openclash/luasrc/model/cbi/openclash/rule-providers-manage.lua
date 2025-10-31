@@ -9,9 +9,8 @@ local UTIL = require "luci.util"
 local fs = require "luci.openclash"
 local uci = require "luci.model.uci".cursor()
 
-m = SimpleForm("openclash", translate("Other Rule Providers List"))
-m.description=translate("Rule Project:").." lhie1 ( https://github.com/dler-io/Rules )<br/>"..
-translate("Rule Project:").." ACL4SSR ( https://github.com/ACL4SSR/ACL4SSR/tree/master )"
+m = SimpleForm("openclash", translate(""))
+m.description=translate("")
 m.reset = false
 m.submit = false
 
