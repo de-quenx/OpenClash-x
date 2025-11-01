@@ -7,7 +7,7 @@ function index()
 
 	local page
 	
-	page = entry({"admin", "services", "openclash"}, alias("admin", "services", "openclash", "client"), _("OpenClash"), 50)
+	page = entry({"admin", "services", "openclash"}, alias("admin", "services", "openclash", "client"), _("OpenClash"), 5)
 	page.dependent = true
 	page.acl_depends = { "luci-app-openclash" }
 	entry({"admin", "services", "openclash", "client"},form("openclash/client"),_("Overviews"), 20).leaf = true
@@ -71,28 +71,27 @@ function index()
 	entry({"admin", "services", "openclash", "check_core"}, call("action_check_core"))
 	entry({"admin", "services", "openclash", "core_download"}, call("core_download"))
 	entry({"admin", "services", "openclash", "announcement"}, call("action_announcement"))
-	entry({"admin", "services", "openclash", "settings"},cbi("openclash/settings"),_("Plugin Settings"), 30).leaf = true
-	entry({"admin", "services", "openclash", "config-overwrite"},cbi("openclash/config-overwrite"),_("Overwrite Settings"), 40).leaf = true
-	entry({"admin", "services", "openclash", "servers"},cbi("openclash/servers"),_("Onekey Create"), 50).leaf = true
+	entry({"admin", "services", "openclash", "oceditor"},template("openclash/oceditor"),_("Config Editor"), 30).leaf = true
+	entry({"admin", "services", "openclash", "config"},form("openclash/config"),_("Config Manage"), 40).leaf = true
+	entry({"admin", "services", "openclash", "settings"},cbi("openclash/settings"),_("Plugin Settings"), 50).leaf = true
+	entry({"admin", "services", "openclash", "config-overwrite"},cbi("openclash/config-overwrite"),_("Overwrite Settings"), 60).leaf = true
+	entry({"admin", "services", "openclash", "servers"},cbi("openclash/servers"),_("Onekey Create"), 70).leaf = true
 	entry({"admin", "services", "openclash", "other-rules-edit"},cbi("openclash/other-rules-edit"), nil).leaf = true
 	entry({"admin", "services", "openclash", "custom-dns-edit"},cbi("openclash/custom-dns-edit"), nil).leaf = true
 	entry({"admin", "services", "openclash", "other-file-edit"},cbi("openclash/other-file-edit"), nil).leaf = true
-	entry({"admin", "services", "openclash", "rule-providers-settings"},cbi("openclash/rule-providers-settings"),_("Rule Providers Append"), 60).leaf = true
+	entry({"admin", "services", "openclash", "rule-providers-settings"},cbi("openclash/rule-providers-settings"),_("Rule Providers Append"), 80).leaf = true
 	entry({"admin", "services", "openclash", "game-rules-manage"},form("openclash/game-rules-manage"), nil).leaf = true
 	entry({"admin", "services", "openclash", "rule-providers-manage"},form("openclash/rule-providers-manage"), nil).leaf = true
 	entry({"admin", "services", "openclash", "proxy-provider-file-manage"},form("openclash/proxy-provider-file-manage"), nil).leaf = true
 	entry({"admin", "services", "openclash", "rule-providers-file-manage"},form("openclash/rule-providers-file-manage"), nil).leaf = true
 	entry({"admin", "services", "openclash", "game-rules-file-manage"},form("openclash/game-rules-file-manage"), nil).leaf = true
-	entry({"admin", "services", "openclash", "config-subscribe"},cbi("openclash/config-subscribe"),_("Config Subscribe"), 70).leaf = true
+	entry({"admin", "services", "openclash", "config-subscribe"},cbi("openclash/config-subscribe"),_("Config Subscribe"), 90).leaf = true
 	entry({"admin", "services", "openclash", "config-subscribe-edit"},cbi("openclash/config-subscribe-edit"), nil).leaf = true
 	entry({"admin", "services", "openclash", "servers-config"},cbi("openclash/servers-config"), nil).leaf = true
 	entry({"admin", "services", "openclash", "groups-config"},cbi("openclash/groups-config"), nil).leaf = true
 	entry({"admin", "services", "openclash", "proxy-provider-config"},cbi("openclash/proxy-provider-config"), nil).leaf = true
 	entry({"admin", "services", "openclash", "rule-providers-config"},cbi("openclash/rule-providers-config"), nil).leaf = true
-	entry({"admin", "services", "openclash", "config"},form("openclash/config"),_("Config Manage"), 80).leaf = true
-	entry({"admin", "services", "openclash", "log"},cbi("openclash/log"),_("Server Logs"), 90).leaf = true
-	entry({"admin", "services", "openclash", "myip_check"}, call("action_myip_check"))
-	entry({"admin", "services", "openclash", "website_check"}, call("action_website_check"))
+	entry({"admin", "services", "openclash", "log"},cbi("openclash/log"),_("Server Logs"), 100).leaf = true
 	entry({"admin", "services", "openclash", "proxy_info"}, call("action_proxy_info"))
 	entry({"admin", "services", "openclash", "oc_settings"}, call("action_oc_settings"))
 	entry({"admin", "services", "openclash", "switch_oc_setting"}, call("action_switch_oc_setting"))
@@ -517,7 +516,7 @@ local function dler_login_info_save()
 end
 
 local function dler_login()
-	local info, token, get_sub, sub_info, sub_key, sub_match, sub_convert, sid
+	local info, token, get_sub, sub_info, sub_key, sub_match
 	local sub_path = "/tmp/dler_sub"
 	local email = fs.uci_get_config("config", "dler_email")
 	local passwd = fs.uci_get_config("config", "dler_passwd")
@@ -541,25 +540,14 @@ local function dler_login()
 				for _,v in ipairs(sub_key) do
 					while true do
 						sub_match = false
-						sub_convert = false
 						uci:foreach("openclash", "config_subscribe",
 						function(s)
 							if s.name == "Dler Cloud - " .. v and s.address == sub_info[v] then
-								sub_match = true
-							end
-							if s.name == "Dler Cloud - " .. v and s.address ~= sub_info[v] then
-								sub_convert = true
-								sid = s['.name']
+			   				sub_match = true
 							end
 						end)
 						if sub_match then break end
-						if sub_convert then
-							uci:set("openclash", sid, "address", sub_info[v])
-						else
-							sid = uci:add("openclash", "config_subscribe")
-							uci:set("openclash", sid, "name", "Dler Cloud - " .. v)
-							uci:set("openclash", sid, "address", sub_info[v])
-						end
+						luci.sys.exec(string.format('sid=$(uci -q add openclash config_subscribe) && uci -q set openclash."$sid".name="Dler Cloud - %s" && uci -q set openclash."$sid".address="%s"', v, sub_info[v]))
 						uci:commit("openclash")
 						break
 					end
