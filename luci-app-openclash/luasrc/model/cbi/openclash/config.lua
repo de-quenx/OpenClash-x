@@ -367,7 +367,7 @@ o.write = function()
   HTTP.redirect(DISP.build_url("admin", "services", "openclash", "game-rules-file-manage"))
 end
 
-m = SimpleForm("openclash",translate("Config File Edit"))
+m = SimpleForm("openclash",translate(""))
 m.reset = false
 m.submit = false
 

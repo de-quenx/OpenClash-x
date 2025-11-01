@@ -45,8 +45,7 @@ if not op_mode then op_mode = "redir-host" end
 local lan_ip = fs.lanip()
 m = Map("openclash", translate("Overwrite Settings"))
 m.pageaction = false
-m.description = translate("Note: To restore the default configuration, try accessing:").." <a href='javascript:void(0)' onclick='javascript:restore_config(this)'>http://"..lan_ip.."/cgi-bin/luci/admin/services/openclash/restore</a>"..
-"<br/>"..font_green..translate("For More Useful Meta Core Functions Go Wiki")..": "..font_off.."<a href='javascript:void(0)' onclick='javascript:return winOpen(\"https://wiki.metacubex.one/\")'>"..translate("https://wiki.metacubex.one/").."</a>"
+m.description = translate("")
 
 s = m:section(TypedSection, "openclash")
 s.anonymous = true
@@ -173,8 +172,8 @@ o.description = translate("Automatically Append Compliant DNS to default-nameser
 o.default = 1
 
 if op_mode == "fake-ip" then
-o = s:taboption("dns", Value, "fakeip_range", translate("Fake-IP Range").." (IPv4 Cidr)")
-o.description = translate("Set Fake-IP Range").." (IPv4 Cidr)"
+o = s:taboption("dns", Value, "fakeip_range", translate("Fake-IP Range (IPv4 Cidr)"))
+o.description = translate("Set Fake-IP Range (IPv4 Cidr)")
 o:value("0", translate("Disable"))
 o:value("198.18.0.1/16")
 o.default = "0"
@@ -674,6 +673,5 @@ o.write = function()
 end
 
 m:append(Template("openclash/config_editor"))
-m:append(Template("openclash/toolbar_show"))
 
 return m

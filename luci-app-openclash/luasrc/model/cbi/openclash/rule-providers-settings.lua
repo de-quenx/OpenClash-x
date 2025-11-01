@@ -9,18 +9,9 @@ local UTIL = require "luci.util"
 local fs = require "luci.openclash"
 local uci = require "luci.model.uci".cursor()
 
-m = Map(openclash,  translate("Rule Providers Append"))
+m = Map(openclash,  translate(""))
 m.pageaction = false
-m.description=translate("Attention:")..
-"<br/>"..translate("The game proxy is a test function and does not guarantee the availability of rules")..
-"<br/>"..translate("Preparation steps:")..
-"<br/>"..translate("1. Check the policy group and node you are going to use, Policy group type suggestion: fallback, game nodes must be support UDP and not a Vmess")..
-"<br/>"..translate("2. Click the <manage third party game rules> or <manage third party rule set> button to enter the rule list and download the rules you want to use")..
-"<br/>"..translate("3. On this page, set the corresponding configuration file and policy group of the rule you have downloaded, and save the settings")..
-"<br/>"..
-"<br/>"..translate("When setting this page, if the groups is empty, please go to the <Onekey Create> page to add")..
-"<br/>"..
-"<br/>"..translate("Introduction to rule set usage:").." <a href='javascript:void(0)' onclick='javascript:return winOpen(\"https://wiki.metacubex.one/config/rule-providers/content/\")'>"..translate("https://wiki.metacubex.one/config/rule-providers/content/").."</a>"
+m.description=translate("")
 
 function IsRuleFile(e)
 e=e or""
@@ -280,7 +271,5 @@ o.write = function()
   SYS.call("/etc/init.d/openclash restart >/dev/null 2>&1 &")
   HTTP.redirect(DISP.build_url("admin", "services", "openclash"))
 end
-
-m:append(Template("openclash/toolbar_show"))
 
 return m

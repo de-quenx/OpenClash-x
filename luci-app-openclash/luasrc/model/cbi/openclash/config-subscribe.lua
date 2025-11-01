@@ -39,7 +39,7 @@ font_off = [[</b>]]
 bold_on  = [[<strong>]]
 bold_off = [[</strong>]]
 
-m = Map("openclash",  translate("Config Subscribe"))
+m = Map("openclash",  translate(""))
 m.pageaction = false
 
 s = m:section(TypedSection, "openclash")
@@ -179,7 +179,5 @@ o.write = function()
   SYS.call("/usr/share/openclash/openclash.sh >/dev/null 2>&1 &")
   HTTP.redirect(DISP.build_url("admin", "services", "openclash"))
 end
-
-m:append(Template("openclash/toolbar_show"))
 
 return m

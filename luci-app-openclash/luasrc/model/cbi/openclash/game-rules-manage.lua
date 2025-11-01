@@ -9,8 +9,8 @@ local UTIL = require "luci.util"
 local fs = require "luci.openclash"
 local uci = require "luci.model.uci".cursor()
 
-m = SimpleForm("openclash", translate("Game Rules List"))
-m.description=translate("Rule Project:").." SSTap-Rule ( https://github.com/FQrabbit/SSTap-Rule )"
+m = SimpleForm("openclash", translate(""))
+m.description=translate("")
 m.reset = false
 m.submit = false
 
