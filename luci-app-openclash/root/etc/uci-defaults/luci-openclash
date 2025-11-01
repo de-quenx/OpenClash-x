@@ -15,8 +15,6 @@ uci -q set firewall.openclash.path=/var/etc/openclash.include
 [ -n "$(command -v fw4)" ] || uci -q set firewall.openclash.reload=1
 uci -q commit firewall
 
-mkdir -p /etc/openclash/config
-mkdir -p /etc/openclash/proxy_provider
 mkdir -p /etc/openclash/backup
 mkdir -p /etc/openclash/core
 mkdir -p /etc/openclash/history
