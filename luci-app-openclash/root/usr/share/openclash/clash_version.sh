@@ -1,5 +1,4 @@
 #!/bin/bash
-. /usr/share/openclash/openclash_curl.sh
 . /usr/share/openclash/uci.sh
 
 set_lock() {
@@ -14,26 +13,68 @@ del_lock() {
 
 set_lock
 
-TIME=$(date "+%Y-%m-%d-%H")
-CHTIME=$(date "+%Y-%m-%d-%H" -r "/tmp/clash_last_version" 2>/dev/null)
 DOWNLOAD_FILE="/tmp/clash_last_version"
-RELEASE_BRANCH=$(uci_get_config "release_branch" || echo "master")
-github_address_mod=$(uci_get_config "github_address_mod" || echo 0)
-if [ -n "$1" ]; then
-   github_address_mod="$1"
-fi
 
-if [ "$TIME" != "$CHTIME" ]; then
-   if [ "$github_address_mod" != "0" ]; then
-      if [ "$github_address_mod" == "https://cdn.jsdelivr.net/" ] || [ "$github_address_mod" == "https://fastly.jsdelivr.net/" ] || [ "$github_address_mod" == "https://testingcf.jsdelivr.net/" ]; then
-         DOWNLOAD_URL="${github_address_mod}gh/vernesong/OpenClash@core/${RELEASE_BRANCH}/core_version"
-      else
-         DOWNLOAD_URL="${github_address_mod}https://raw.githubusercontent.com/vernesong/OpenClash/core/${RELEASE_BRANCH}/core_version"
+# Path binary Clash
+CLASH_META="/etc/openclash/core/clash_meta"
+CLASH_BINARY="/etc/openclash/core/clash"
+CLASH_TUN="/etc/openclash/core/clash_tun"
+
+# Fungsi untuk mendapatkan versi
+get_clash_version() {
+   local binary="$1"
+   if [ -f "$binary" ] && [ -x "$binary" ]; then
+      # Coba berbagai cara mendapatkan versi
+      local ver=$("$binary" -v 2>/dev/null | grep -oE 'v[0-9]+\.[0-9]+\.[0-9]+' | head -n1)
+      if [ -z "$ver" ]; then
+         ver=$("$binary" -version 2>/dev/null | grep -oE 'v[0-9]+\.[0-9]+\.[0-9]+' | head -n1)
       fi
-   else
-      DOWNLOAD_URL="https://raw.githubusercontent.com/vernesong/OpenClash/core/${RELEASE_BRANCH}/core_version"
+      if [ -z "$ver" ]; then
+         ver=$("$binary" 2>&1 | grep -oE 'v[0-9]+\.[0-9]+\.[0-9]+' | head -n1)
+      fi
+      echo "$ver"
    fi
+}
 
-   DOWNLOAD_FILE_CURL "$DOWNLOAD_URL" "$DOWNLOAD_FILE"
+# Deteksi core yang aktif dari config
+CORE_TYPE=$(uci_get_config "core_type" || echo "0")
+
+# 0=auto, 1=TUN, 2=Meta, 3=Game
+case "$CORE_TYPE" in
+   1)
+      CORE_VERSION=$(get_clash_version "$CLASH_TUN")
+      CORE_NAME="clash_tun"
+      ;;
+   2)
+      CORE_VERSION=$(get_clash_version "$CLASH_META")
+      CORE_NAME="clash_meta"
+      ;;
+   *)
+      # Auto detect: cek Meta dulu, lalu TUN, lalu Premium
+      if [ -f "$CLASH_META" ]; then
+         CORE_VERSION=$(get_clash_version "$CLASH_META")
+         CORE_NAME="clash_meta"
+      elif [ -f "$CLASH_TUN" ]; then
+         CORE_VERSION=$(get_clash_version "$CLASH_TUN")
+         CORE_NAME="clash_tun"
+      elif [ -f "$CLASH_BINARY" ]; then
+         CORE_VERSION=$(get_clash_version "$CLASH_BINARY")
+         CORE_NAME="clash"
+      fi
+      ;;
+esac
+
+# Simpan ke file dengan format yang mirip aslinya
+if [ -n "$CORE_VERSION" ]; then
+   cat > "$DOWNLOAD_FILE" << EOF
+${CORE_VERSION}
+# Update check disabled - ${CORE_NAME}
+EOF
+else
+   cat > "$DOWNLOAD_FILE" << EOF
+unknown
+# No core installed or version not detected
+EOF
 fi
+
 del_lock
